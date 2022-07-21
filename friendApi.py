@@ -1,5 +1,4 @@
 import requests
-import json
 
 #retrieves the web access token using the special spotify cookie
 def getWebAccessToken(cookie):

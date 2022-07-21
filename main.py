@@ -1,23 +1,40 @@
 from friendApi import getWebAccessToken, getFriendActivity
 from dotenv import load_dotenv
-import threading
-import datetime
+from discord.ext import commands
+import discord
 import os
+import datetime
 
+
+#https://discord.com/api/oauth2/authorize?client_id=999172844703457310&permissions=536964096&scope=bot
 
 load_dotenv()
 
-def main():
-    threading.Timer(300.0, main).start()
-    token = os.getenv('SPOTIFY_TOKEN')
+TOKEN = os.getenv("BOT_TOKEN")
+bot = commands.Bot(command_prefix="!")
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
+
+@bot.command(name='spotify')
+async def giveActivity(ctx):
+    print("something")
+    token = os.getenv('SPOTIFY_TOKEN2')
     accessToken = getWebAccessToken(token)
     friendActivity = getFriendActivity(accessToken)
+    
+    #creating the embed
+    embed = discord.Embed(title="Recent Activity")
 
-    # printing friend activity
-    for (i, friend) in enumerate(friendActivity['friends']):
-        print(f'{i+1}. {friend["user"]["name"]} at {(datetime.datetime.fromtimestamp(int(friend["timestamp"])/1000)).strftime("%Y-%m-%d %H:%M:%S")}')
-        print(f'\t{friend["track"]["name"]} by {friend["track"]["artist"]["name"]}')
-        print(f'\tLink: https://open.spotify.com/track/{friend["track"]["uri"][14:]}')
-        print('\n')
+    #adding the embed fields
+    for (i, friend) in enumerate(reversed(friendActivity["friends"])):
+        embed.add_field(name=friend['user']['name'], value=(f'{i+1}. {friend["track"]["name"]} by {friend["track"]["artist"]["name"]} at {(datetime.datetime.fromtimestamp(int(friend["timestamp"])/1000)).strftime("%Y-%m-%d %H:%M:%S")}'), inline=False)
+    
+    await ctx.send(embed=embed)
 
-main()
+def main():
+    bot.run(TOKEN)
+
+if __name__ == "__main__":
+    main()

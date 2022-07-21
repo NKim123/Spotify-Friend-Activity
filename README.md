@@ -1,5 +1,5 @@
 # Spotify-Friend-Activity
 
-Currently retrieves information from the internal spotify friend activity api and not much else.
+Project that is working on a way to access spotify friend activity on mobile
 
 Need to retrieve your own cookie from the spotify webplayer.
